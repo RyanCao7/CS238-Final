@@ -1,5 +1,26 @@
 from catanatron.models.board import get_edges
+from catanatron.models.map import NUM_NODES, NUM_EDGES, NUM_TILES
 import torch
+import models
+
+# --- opts.py ---
+REPLAY_BUFFER_CAPACITY = 20000
+DEFAULT_DQN_LR = 1e-3
+DEFAULT_DQN_EPISODES = 10000
+DEFAULT_DQN_OPTIM = 'adam'
+TRAIN_EVERY_NUM_TIMESTEPS = 100
+UPDATE_DQN_EVERY_NUM_TIMESTEPS = 500
+DQN_MODEL_TYPES = {
+    'Catan_Feedforward_DQN': models.Catan_Feedforward_DQN
+}
+DEFAULT_DQN_MODEL = 'Catan_Feedforward_DQN'
+
+# --- models.py ---
+DEFAULT_BOARD_SIZE = 7
+BUY_DEVELOPMENT_CARD_ACTIONS = 2
+PLAY_DEVELOPMENT_CARD_ACTIONS = 2
+# Settlements, cities, roads, robber moving, and (None)
+TOTAL_DQN_ACTIONS = NUM_NODES * 2 + NUM_EDGES + NUM_TILES + 1
 
 # --- Our agent's color ---
 AGENT_COLOR = Color.BLUE

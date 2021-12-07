@@ -68,7 +68,8 @@ class Catan_Feedforward_DQN(nn.Module):
 
         # --- Robber ---
         robber_input = F.relu(self.grid_robber_head_bn(self.grid_robber_head_1(robber_input)))
-        robber_input = robber_input.view(robber_input.size(0), -1) # --- Flatten ---
+        # --- Flatten ---
+        robber_input = robber_input.view(robber_input.size(0), -1)
 
         # --- Roads ---
         road_input = F.relu(self.road_color_head_bn_1(self.road_color_head_1(road_input)))

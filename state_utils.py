@@ -8,6 +8,7 @@ from catanatron import state_functions
 import catanatron
 import pydoc
 import numpy as np
+import torch
 
 import constants
 
@@ -60,7 +61,7 @@ def extract_board_state(game, agent_color=constants.AGENT_COLOR):
     }
 
     # --- Throw in the immutables (TODO(ryancao): Do we even need this?) ---
-    board_state.update(constants.IMMUTABLE_BOARD_STATE)
+    # board_state.update(constants.IMMUTABLE_BOARD_STATE)
 
     # --- Robber ---
     robber_coords = catanatron.models.coordinate_system.cube_to_offset(game.state.board.robber_coordinate)
@@ -112,5 +113,9 @@ def extract_board_state(game, agent_color=constants.AGENT_COLOR):
         game.state.player_state[f"{opponent_key}_WHEAT_IN_HAND"]
     board_state['opponent_resources'][constants.RESOURCES_TO_IDX[Resource.ORE]] = \
         game.state.player_state[f"{opponent_key}_ORE_IN_HAND"]
+
+    # --- Adding channel dim and converting to tensor ---
+    for (key, value) in board_state.items():
+        board_state[key] = torch.from_numpy(np.expand_dims(value, axis=0))
 
     return board_state

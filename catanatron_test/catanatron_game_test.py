@@ -1,5 +1,5 @@
 from catanatron.game import Game
-from catanatron.models.player import RandomPlayer, Color
+from catanatron.models.player import RandomPlayer, Color, HumanPlayer
 from catanatron_experimental.my_player import MyPlayer
 from catanatron_server.utils import open_link
 from catanatron.models.enums import Resource, BuildingType
@@ -284,7 +284,7 @@ def extract_board_state(game):
 def main():
     # Play a simple 4v4 game. Edit MyPlayer with your logic!
     players = [
-        MyPlayer(Color.RED),
+        HumanPlayer(Color.RED),
         RandomPlayer(Color.BLUE),
         RandomPlayer(Color.WHITE),
         RandomPlayer(Color.ORANGE),
