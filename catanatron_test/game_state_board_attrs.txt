@@ -1,0 +1,172 @@
+
+------------------------------
+bfs_walk
+<bound method Board.bfs_walk of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method bfs_walk in module catanatron.models.board
+
+bfs_walk(node_id, color) method of catanatron.models.board.Board instance
+    Generates set of nodes that are "connected" to given node.
+    
+    Args:
+        node_id (int): Where to start search/walk.
+        color (Color): Player color asking
+    
+    Returns:
+        Set[int]: Nodes that are "connected" to this one
+            by roads of the color player.
+
+
+------------------------------
+board_buildable_ids
+{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53}
+
+------------------------------
+build_city
+<bound method Board.build_city of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method build_city in module catanatron.models.board
+
+build_city(color, node_id) method of catanatron.models.board.Board instance
+
+
+------------------------------
+build_road
+<bound method Board.build_road of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method build_road in module catanatron.models.board
+
+build_road(color, edge) method of catanatron.models.board.Board instance
+
+
+------------------------------
+build_settlement
+<bound method Board.build_settlement of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method build_settlement in module catanatron.models.board
+
+build_settlement(color, node_id, initial_build_phase=False) method of catanatron.models.board.Board instance
+    Adds a settlement, and ensures is a valid place to build.
+    
+    Args:
+        color (Color): player's color
+        node_id (int): where to build
+        initial_build_phase (bool, optional):
+            Whether this is part of initial building phase, so as to skip
+            connectedness validation. Defaults to True.
+
+
+------------------------------
+buildable_edges
+<bound method Board.buildable_edges of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method buildable_edges in module catanatron.models.board
+
+buildable_edges(color: catanatron.models.player.Color) method of catanatron.models.board.Board instance
+    List of (n1,n2) tuples. Edges are in n1 < n2 order.
+
+
+------------------------------
+buildable_node_ids
+<bound method Board.buildable_node_ids of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method buildable_node_ids in module catanatron.models.board
+
+buildable_node_ids(color: catanatron.models.player.Color, initial_build_phase=False) method of catanatron.models.board.Board instance
+
+
+------------------------------
+buildings
+{}
+
+------------------------------
+connected_components
+defaultdict(<class 'list'>, {})
+
+------------------------------
+continuous_roads_by_player
+<bound method Board.continuous_roads_by_player of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method continuous_roads_by_player in module catanatron.models.board
+
+continuous_roads_by_player(color: catanatron.models.player.Color) method of catanatron.models.board.Board instance
+
+
+------------------------------
+copy
+<bound method Board.copy of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method copy in module catanatron.models.board
+
+copy() method of catanatron.models.board.Board instance
+
+
+------------------------------
+find_connected_components
+<bound method Board.find_connected_components of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method find_connected_components in module catanatron.models.board
+
+find_connected_components(color: catanatron.models.player.Color) method of catanatron.models.board.Board instance
+    Returns:
+        nx.Graph[]: connected subgraphs. subgraphs
+            might include nodes that color doesnt own (on the way and on ends),
+            just to make it is "closed" and easier for buildable_nodes to operate.
+
+
+------------------------------
+get_edge_color
+<bound method Board.get_edge_color of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method get_edge_color in module catanatron.models.board
+
+get_edge_color(edge) method of catanatron.models.board.Board instance
+
+
+------------------------------
+get_node_color
+<bound method Board.get_node_color of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method get_node_color in module catanatron.models.board
+
+get_node_color(node_id) method of catanatron.models.board.Board instance
+    # ===== Helper functions
+
+
+------------------------------
+get_player_port_resources
+<bound method Board.get_player_port_resources of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method get_player_port_resources in module catanatron.models.board
+
+get_player_port_resources(color) method of catanatron.models.board.Board instance
+    Yields resources (None for 3:1) of ports owned by color
+
+
+------------------------------
+is_enemy_node
+<bound method Board.is_enemy_node of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method is_enemy_node in module catanatron.models.board
+
+is_enemy_node(node_id, color) method of catanatron.models.board.Board instance
+
+
+------------------------------
+is_enemy_road
+<bound method Board.is_enemy_road of <catanatron.models.board.Board object at 0x7fa8d9fde700>>
+Python Library Documentation: method is_enemy_road in module catanatron.models.board
+
+is_enemy_road(edge, color) method of catanatron.models.board.Board instance
+
+
+------------------------------
+map
+<catanatron.models.map.BaseMap object at 0x7fa8d9fb6910>
+
+------------------------------
+road_color
+None
+
+------------------------------
+road_length
+0
+
+------------------------------
+road_lengths
+defaultdict(<class 'int'>, {})
+
+------------------------------
+roads
+{}
+
+------------------------------
+robber_coordinate
+(-1, 2, -1)

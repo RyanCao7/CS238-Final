@@ -1,0 +1,81 @@
+
+------------------------------
+copy
+<bound method Game.copy of <catanatron.game.Game object at 0x7f001e964c70>>
+Python Library Documentation: method copy in module catanatron.game
+
+copy() -> 'Game' method of catanatron.game.Game instance
+    Creates a copy of this Game, that can be modified without
+    repercusions on this one (useful for simulations).
+    
+    Returns:
+        Game: Game copy.
+
+
+------------------------------
+execute
+<bound method Game.execute of <catanatron.game.Game object at 0x7f001e964c70>>
+Python Library Documentation: method execute in module catanatron.game
+
+execute(action: catanatron.models.enums.Action, action_callbacks=[], validate_action: bool = True) -> catanatron.models.enums.Action method of catanatron.game.Game instance
+    Internal call that carries out decided action by player
+
+
+------------------------------
+id
+071f899a-eaa6-4c0a-b12b-e8768d2869dd
+
+------------------------------
+play
+<bound method Game.play of <catanatron.game.Game object at 0x7f001e964c70>>
+Python Library Documentation: method play in module catanatron.game
+
+play(action_callbacks=[], decide_fn=None) method of catanatron.game.Game instance
+    Executes game until a player wins or exceeded TURNS_LIMIT.
+    
+    Args:
+        action_callbacks (list, optional): list of functions to run after state is changed.
+            These should expect state as a parameter. Defaults to [].
+        decide_fn (function, optional): Function to overwrite current player's decision with.
+            Defaults to None.
+    Returns:
+        Color: winning color or None if game exceeded TURNS_LIMIT
+
+
+------------------------------
+play_tick
+<bound method Game.play_tick of <catanatron.game.Game object at 0x7f001e964c70>>
+Python Library Documentation: method play_tick in module catanatron.game
+
+play_tick(action_callbacks=[], decide_fn=None) method of catanatron.game.Game instance
+    Advances game by one ply (player decision).
+    
+    Args:
+        action_callbacks (list, optional): list of functions to run after state is changed.
+            These should expect state as a parameter. Defaults to [].
+        decide_fn (function, optional): Function to overwrite current player's decision with.
+            Defaults to None.
+    
+    Returns:
+        Action: Final action (modified to be used as Log)
+
+
+------------------------------
+seed
+8245642440479938969
+
+------------------------------
+state
+<catanatron.state.State object at 0x7f001e92f730>
+
+------------------------------
+winning_color
+<bound method Game.winning_color of <catanatron.game.Game object at 0x7f001e964c70>>
+Python Library Documentation: method winning_color in module catanatron.game
+
+winning_color() -> Union[catanatron.models.player.Color, NoneType] method of catanatron.game.Game instance
+    Gets winning color
+    
+    Returns:
+        Union[Color, None]: Might be None if game truncated by TURNS_LIMIT
+

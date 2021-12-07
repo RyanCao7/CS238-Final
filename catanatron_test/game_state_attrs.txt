@@ -1,0 +1,98 @@
+
+------------------------------
+actions
+[]
+
+------------------------------
+board
+<catanatron.models.board.Board object at 0x7f622d834700>
+
+------------------------------
+buildings_by_color
+{<Color.RED: 'RED'>: defaultdict(<class 'list'>, {}), <Color.BLUE: 'BLUE'>: defaultdict(<class 'list'>, {}), <Color.WHITE: 'WHITE'>: defaultdict(<class 'list'>, {}), <Color.ORANGE: 'ORANGE'>: defaultdict(<class 'list'>, {})}
+
+------------------------------
+color_to_index
+{<Color.RED: 'RED'>: 0, <Color.ORANGE: 'ORANGE'>: 1, <Color.WHITE: 'WHITE'>: 2, <Color.BLUE: 'BLUE'>: 3}
+
+------------------------------
+colors
+(<Color.RED: 'RED'>, <Color.ORANGE: 'ORANGE'>, <Color.WHITE: 'WHITE'>, <Color.BLUE: 'BLUE'>)
+
+------------------------------
+copy
+<bound method State.copy of <catanatron.state.State object at 0x7f622d834730>>
+Python Library Documentation: method copy in module catanatron.state
+
+copy() method of catanatron.state.State instance
+    Creates a copy of this State class that can be modified without
+    repercusions to this one.
+    
+    Returns:
+        State: State copy.
+
+
+------------------------------
+current_player
+<bound method State.current_player of <catanatron.state.State object at 0x7f622d834730>>
+Python Library Documentation: method current_player in module catanatron.state
+
+current_player() method of catanatron.state.State instance
+    Helper for accessing Player instance who should decide next
+
+
+------------------------------
+current_player_index
+0
+
+------------------------------
+current_prompt
+ActionPrompt.BUILD_INITIAL_SETTLEMENT
+
+------------------------------
+current_turn_index
+0
+
+------------------------------
+development_deck
+array('H', [14, 2, 2, 2, 5])
+
+------------------------------
+free_roads_available
+0
+
+------------------------------
+is_discarding
+False
+
+------------------------------
+is_initial_build_phase
+True
+
+------------------------------
+is_moving_knight
+False
+
+------------------------------
+is_road_building
+False
+
+------------------------------
+num_turns
+0
+
+------------------------------
+playable_actions
+[Action(RED BUILD_SETTLEMENT 0), Action(RED BUILD_SETTLEMENT 1), Action(RED BUILD_SETTLEMENT 2), Action(RED BUILD_SETTLEMENT 3), Action(RED BUILD_SETTLEMENT 4), Action(RED BUILD_SETTLEMENT 5), Action(RED BUILD_SETTLEMENT 6), Action(RED BUILD_SETTLEMENT 7), Action(RED BUILD_SETTLEMENT 8), Action(RED BUILD_SETTLEMENT 9), Action(RED BUILD_SETTLEMENT 10), Action(RED BUILD_SETTLEMENT 11), Action(RED BUILD_SETTLEMENT 12), Action(RED BUILD_SETTLEMENT 13), Action(RED BUILD_SETTLEMENT 14), Action(RED BUILD_SETTLEMENT 15), Action(RED BUILD_SETTLEMENT 16), Action(RED BUILD_SETTLEMENT 17), Action(RED BUILD_SETTLEMENT 18), Action(RED BUILD_SETTLEMENT 19), Action(RED BUILD_SETTLEMENT 20), Action(RED BUILD_SETTLEMENT 21), Action(RED BUILD_SETTLEMENT 22), Action(RED BUILD_SETTLEMENT 23), Action(RED BUILD_SETTLEMENT 24), Action(RED BUILD_SETTLEMENT 25), Action(RED BUILD_SETTLEMENT 26), Action(RED BUILD_SETTLEMENT 27), Action(RED BUILD_SETTLEMENT 28), Action(RED BUILD_SETTLEMENT 29), Action(RED BUILD_SETTLEMENT 30), Action(RED BUILD_SETTLEMENT 31), Action(RED BUILD_SETTLEMENT 32), Action(RED BUILD_SETTLEMENT 33), Action(RED BUILD_SETTLEMENT 34), Action(RED BUILD_SETTLEMENT 35), Action(RED BUILD_SETTLEMENT 36), Action(RED BUILD_SETTLEMENT 37), Action(RED BUILD_SETTLEMENT 38), Action(RED BUILD_SETTLEMENT 39), Action(RED BUILD_SETTLEMENT 40), Action(RED BUILD_SETTLEMENT 41), Action(RED BUILD_SETTLEMENT 42), Action(RED BUILD_SETTLEMENT 43), Action(RED BUILD_SETTLEMENT 44), Action(RED BUILD_SETTLEMENT 45), Action(RED BUILD_SETTLEMENT 46), Action(RED BUILD_SETTLEMENT 47), Action(RED BUILD_SETTLEMENT 48), Action(RED BUILD_SETTLEMENT 49), Action(RED BUILD_SETTLEMENT 50), Action(RED BUILD_SETTLEMENT 51), Action(RED BUILD_SETTLEMENT 52), Action(RED BUILD_SETTLEMENT 53)]
+
+------------------------------
+player_state
+{'P0_VICTORY_POINTS': 0, 'P0_ROADS_AVAILABLE': 15, 'P0_SETTLEMENTS_AVAILABLE': 5, 'P0_CITIES_AVAILABLE': 4, 'P0_HAS_ROAD': False, 'P0_HAS_ARMY': False, 'P0_HAS_ROLLED': False, 'P0_HAS_PLAYED_DEVELOPMENT_CARD_IN_TURN': False, 'P0_ACTUAL_VICTORY_POINTS': 0, 'P0_LONGEST_ROAD_LENGTH': 0, 'P0_WOOD_IN_HAND': 0, 'P0_BRICK_IN_HAND': 0, 'P0_SHEEP_IN_HAND': 0, 'P0_WHEAT_IN_HAND': 0, 'P0_ORE_IN_HAND': 0, 'P0_KNIGHT_IN_HAND': 0, 'P0_PLAYED_KNIGHT': 0, 'P0_YEAR_OF_PLENTY_IN_HAND': 0, 'P0_PLAYED_YEAR_OF_PLENTY': 0, 'P0_MONOPOLY_IN_HAND': 0, 'P0_PLAYED_MONOPOLY': 0, 'P0_ROAD_BUILDING_IN_HAND': 0, 'P0_PLAYED_ROAD_BUILDING': 0, 'P0_VICTORY_POINT_IN_HAND': 0, 'P0_PLAYED_VICTORY_POINT': 0, 'P1_VICTORY_POINTS': 0, 'P1_ROADS_AVAILABLE': 15, 'P1_SETTLEMENTS_AVAILABLE': 5, 'P1_CITIES_AVAILABLE': 4, 'P1_HAS_ROAD': False, 'P1_HAS_ARMY': False, 'P1_HAS_ROLLED': False, 'P1_HAS_PLAYED_DEVELOPMENT_CARD_IN_TURN': False, 'P1_ACTUAL_VICTORY_POINTS': 0, 'P1_LONGEST_ROAD_LENGTH': 0, 'P1_WOOD_IN_HAND': 0, 'P1_BRICK_IN_HAND': 0, 'P1_SHEEP_IN_HAND': 0, 'P1_WHEAT_IN_HAND': 0, 'P1_ORE_IN_HAND': 0, 'P1_KNIGHT_IN_HAND': 0, 'P1_PLAYED_KNIGHT': 0, 'P1_YEAR_OF_PLENTY_IN_HAND': 0, 'P1_PLAYED_YEAR_OF_PLENTY': 0, 'P1_MONOPOLY_IN_HAND': 0, 'P1_PLAYED_MONOPOLY': 0, 'P1_ROAD_BUILDING_IN_HAND': 0, 'P1_PLAYED_ROAD_BUILDING': 0, 'P1_VICTORY_POINT_IN_HAND': 0, 'P1_PLAYED_VICTORY_POINT': 0, 'P2_VICTORY_POINTS': 0, 'P2_ROADS_AVAILABLE': 15, 'P2_SETTLEMENTS_AVAILABLE': 5, 'P2_CITIES_AVAILABLE': 4, 'P2_HAS_ROAD': False, 'P2_HAS_ARMY': False, 'P2_HAS_ROLLED': False, 'P2_HAS_PLAYED_DEVELOPMENT_CARD_IN_TURN': False, 'P2_ACTUAL_VICTORY_POINTS': 0, 'P2_LONGEST_ROAD_LENGTH': 0, 'P2_WOOD_IN_HAND': 0, 'P2_BRICK_IN_HAND': 0, 'P2_SHEEP_IN_HAND': 0, 'P2_WHEAT_IN_HAND': 0, 'P2_ORE_IN_HAND': 0, 'P2_KNIGHT_IN_HAND': 0, 'P2_PLAYED_KNIGHT': 0, 'P2_YEAR_OF_PLENTY_IN_HAND': 0, 'P2_PLAYED_YEAR_OF_PLENTY': 0, 'P2_MONOPOLY_IN_HAND': 0, 'P2_PLAYED_MONOPOLY': 0, 'P2_ROAD_BUILDING_IN_HAND': 0, 'P2_PLAYED_ROAD_BUILDING': 0, 'P2_VICTORY_POINT_IN_HAND': 0, 'P2_PLAYED_VICTORY_POINT': 0, 'P3_VICTORY_POINTS': 0, 'P3_ROADS_AVAILABLE': 15, 'P3_SETTLEMENTS_AVAILABLE': 5, 'P3_CITIES_AVAILABLE': 4, 'P3_HAS_ROAD': False, 'P3_HAS_ARMY': False, 'P3_HAS_ROLLED': False, 'P3_HAS_PLAYED_DEVELOPMENT_CARD_IN_TURN': False, 'P3_ACTUAL_VICTORY_POINTS': 0, 'P3_LONGEST_ROAD_LENGTH': 0, 'P3_WOOD_IN_HAND': 0, 'P3_BRICK_IN_HAND': 0, 'P3_SHEEP_IN_HAND': 0, 'P3_WHEAT_IN_HAND': 0, 'P3_ORE_IN_HAND': 0, 'P3_KNIGHT_IN_HAND': 0, 'P3_PLAYED_KNIGHT': 0, 'P3_YEAR_OF_PLENTY_IN_HAND': 0, 'P3_PLAYED_YEAR_OF_PLENTY': 0, 'P3_MONOPOLY_IN_HAND': 0, 'P3_PLAYED_MONOPOLY': 0, 'P3_ROAD_BUILDING_IN_HAND': 0, 'P3_PLAYED_ROAD_BUILDING': 0, 'P3_VICTORY_POINT_IN_HAND': 0, 'P3_PLAYED_VICTORY_POINT': 0}
+
+------------------------------
+players
+[MyPlayer:RED, RandomPlayer:ORANGE, RandomPlayer:WHITE, RandomPlayer:BLUE]
+
+------------------------------
+resource_deck
+array('H', [19, 19, 19, 19, 19])
