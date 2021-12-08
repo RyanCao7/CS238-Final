@@ -35,7 +35,7 @@ def train_dqn_agent(dqn_agent, args):
 
         # --- See if we need to log or visualize ---
         if timestep % args.print_every == 0:
-            print(f'Timestep: {timestep} | TODO(ryancao)')
+            dqn_agent.print_stats(timestep)
         if timestep % args.save_every == 0:
             dqn_agent.save_stats()
             dqn_agent.save_model(timestep, num_episodes)

@@ -47,7 +47,7 @@ class DQN_Agent(Player):
         print('Done!\n')
 
         print('--> Setting up train stats...')
-        self.loss_cache = deque([], maxlen=1000)
+        self.loss_cache = deque([], maxlen=self.args.print_every)
         self.train_stats = {
             # --- Note that `losses` is every t steps, while `returns` and `VPs` is every episode ---
             'smoothed_losses': list(),
@@ -203,6 +203,7 @@ class DQN_Agent(Player):
 
         # Compute Huber loss
         loss = self.criterion(state_action_values, expected_state_action_values)
+        self.loss_cache.append(loss.item())
 
         # Optimize the model
         self.optim.zero_grad()
@@ -211,6 +212,19 @@ class DQN_Agent(Player):
             if param.grad is not None:
                 param.grad.data.clamp_(-1, 1)
         self.optim.step()
+
+    def print_stats(self, timestep):
+        """
+        Prints train stats and saves the current loss.
+        """
+        if timestep < self.args.print_every:
+            return
+        avg_loss = mean(self.loss_cache)
+        avg_return = mean(self.train_stats['returns'][-100:])
+        avg_vps = mean(self.train_stats['VPs'][-100:])
+        self.train_stats['losses'].append(self.loss_cache[-1])
+        self.train_stats['smoothed_losses'].append(avg_loss)
+        print(f'Timestep: {timestep} | Average loss: {avg_loss} | Average return: {avg_return} | Average VPs: {avg_vps}')
 
     def save_stats(self):
         save_path = constants.get_model_save_dir(self.args.model_type, self.args.model_name)
