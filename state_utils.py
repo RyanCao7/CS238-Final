@@ -30,7 +30,7 @@ def visualize_map(map_tiles):
     return map
 
 
-def extract_board_state(game, agent_color=constants.AGENT_COLOR):
+def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLOR):
     """
     Returns a board state from the given game.
 
@@ -58,7 +58,16 @@ def extract_board_state(game, agent_color=constants.AGENT_COLOR):
         # > Ore, wheat, sheep, brick, wood
         'player_resources': np.zeros(len(Resource)),
         'opponent_resources': np.zeros(len(Resource)),
+
+        # --- Action mask ---
+        'action_mask': np.zeros(constants.TOTAL_DQN_ACTIONS)
     }
+
+    # --- Create action mask ---
+    for action in playable_actions:
+        if action not in constants.ACTIONS_TO_INDICES:
+            raise RuntimeError(f'Ruh roh, {action} not in ACTIONS_TO_INDICES!')
+        board_state['action_mask'][constants.ACTIONS_TO_INDICES[action]] = 1
 
     # --- Throw in the immutables (TODO(ryancao): Do we even need this?) ---
     # board_state.update(constants.IMMUTABLE_BOARD_STATE)

@@ -206,6 +206,9 @@ def extract_board_state(game):
         # > Ore, wheat, sheep, brick, wood
         'player_resources': np.zeros(len(Resource)),
         'opponent_resources': np.zeros(len(Resource)),
+
+        # --- Victory points: useful for logging and potentially as a feature ---
+        'victory_points': 0,
     }
 
     # --- Robber ---
@@ -278,16 +281,18 @@ def extract_board_state(game):
     state['opponent_resources'][RESOURCES_TO_IDX[Resource.WHEAT]] = game.state.player_state[f"{opponent_key}_WHEAT_IN_HAND"]
     state['opponent_resources'][RESOURCES_TO_IDX[Resource.ORE]] = game.state.player_state[f"{opponent_key}_ORE_IN_HAND"]
 
+    state['victory_points'] = game.state.player_state[f"{agent_key}_ACTUAL_VICTORY_POINTS"]
+
     return state
 
 
 def main():
     # Play a simple 4v4 game. Edit MyPlayer with your logic!
     players = [
-        HumanPlayer(Color.RED),
+        MyPlayer(Color.RED),
         RandomPlayer(Color.BLUE),
-        RandomPlayer(Color.WHITE),
-        RandomPlayer(Color.ORANGE),
+        # RandomPlayer(Color.WHITE),
+        # RandomPlayer(Color.ORANGE),
     ]
     game = Game(players)
 
@@ -326,13 +331,30 @@ def main():
         #     break
 
         game_state = extract_board_state(game)
-        print(game_state['player_resources'])
-        print(game_state['settlement_locs'])
+        # print(game_state['player_resources'])
+        # print(game_state['settlement_locs'])
+        # print(game.state.player_state['P0_VICTORY_POINTS'])
+        # print(game.state.player_state['P0_ACTUAL_VICTORY_POINTS'])
+
+        p0_vp = game.state.player_state['P0_VICTORY_POINTS']
+        p0_avp = game.state.player_state['P0_ACTUAL_VICTORY_POINTS']
+        if (p0_vp != p0_avp):
+            print(p0_vp, p0_avp)
+            exit()
+
+        p1_vp = game.state.player_state['P1_VICTORY_POINTS']
+        p1_avp = game.state.player_state['P1_ACTUAL_VICTORY_POINTS']
+        if (p1_vp != p1_avp):
+            print(p1_vp, p1_avp)
+            exit()
 
         counter += 1
         print(f'Counter: {counter}')
         # if counter == 1:
         #     break
+    
+    # print(p0_vp, p0_avp)
+    # print(p1_vp, p1_avp)
 
 
 if __name__ == '__main__':

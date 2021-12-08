@@ -1,12 +1,23 @@
+from catanatron.models.coordinate_system import cube_to_offset
 from catanatron.models.board import get_edges
 from catanatron.models.map import NUM_NODES, NUM_EDGES, NUM_TILES
+from catanatron.models.enums import Action, ActionType, BuildingType, RESOURCES
 import torch
 import models
+import os
+
+# --- train_dqn.py ---
+ROOT_MODEL_SAVE_DIR = 'models'
+ROOT_VIZ_SAVE_DIR = 'visuals'
+def get_model_save_dir(model_type, model_name):
+    return os.path.join(ROOT_MODEL_SAVE_DIR, model_type, model_name)
+def get_viz_save_dir(model_type, model_name):
+    return os.path.join(ROOT_VIZ_SAVE_DIR, model_type, model_name)
 
 # --- opts.py ---
 REPLAY_BUFFER_CAPACITY = 20000
 DEFAULT_DQN_LR = 1e-3
-DEFAULT_DQN_EPISODES = 10000
+DEFAULT_DQN_NUM_STEPS = 1000000 # Roughly 1000 to 5000 games
 DEFAULT_DQN_OPTIM = 'adam'
 TRAIN_EVERY_NUM_TIMESTEPS = 100
 UPDATE_DQN_EVERY_NUM_TIMESTEPS = 500
@@ -19,8 +30,18 @@ DEFAULT_DQN_MODEL = 'Catan_Feedforward_DQN'
 DEFAULT_BOARD_SIZE = 7
 BUY_DEVELOPMENT_CARD_ACTIONS = 2
 PLAY_DEVELOPMENT_CARD_ACTIONS = 2
-# Settlements, cities, roads, robber moving, and (None)
-TOTAL_DQN_ACTIONS = NUM_NODES * 2 + NUM_EDGES + NUM_TILES + 1
+# Knight, road, era of plenty, monopoly, (VP)
+PLAYABLE_DEV_CARDS = [
+    ActionType.PLAY_KNIGHT_CARD,
+    ActionType.PLAY_YEAR_OF_PLENTY,
+    ActionType.PLAY_MONOPOLY,
+    ActionType.PLAY_ROAD_BUILDING
+]
+# Settlements, cities, roads, robber moving, play dev card, buy dev card, and end turn.
+TOTAL_DQN_ACTIONS = NUM_NODES * 2 + NUM_EDGES + NUM_TILES + len(PLAYABLE_DEV_CARDS) + 1 + 1
+
+# --- Device ---
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # --- Our agent's color ---
 AGENT_COLOR = Color.BLUE
@@ -45,13 +66,90 @@ IDX_TO_RESOURCES = [
 ]
 
 # --- Cached ---
+ACTIONS_TO_INDICES, INDICES_TO_ACTIONS = get_action_mapping()
 EDGES_TO_INDICES, INDICES_TO_EDGES = get_edge_mapping()
-
-# --- Cached ---
 IMMUTABLE_BOARD_STATE = get_immutable_board_state()
 
-# --- Device ---
-DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+def edge_hash(edge):
+    """
+    Hashes a given (n_1, n_2) edge.
+    """
+    return edge[0] * 100 + edge[1]
+
+
+def cubical_coord_hash(cubical_coord):
+    """
+    Returns the "hash value" of a given cubical coord.
+
+    This does NOT produce the same ordering as converting to offset, then hashing!
+    """
+    all_positive_coord = list(x + int(DEFAULT_BOARD_SIZE / 2) for x in cubical_coord)
+    return all_positive_coord[0] * 100 + all_positive_coord[1] * 10 + all_positive_coord[2]
+
+
+def get_action_mapping(agent_color=AGENT_COLOR):
+    """
+    Maps from actions to action indices and vice versa.
+
+    Note: Action = namedtuple("Action", ["color", "action_type", "value"])
+    """
+    actions_to_indices = dict()
+    indices_to_actions = dict()
+    all_nodes = range(NUM_NODES)
+    all_edges_sorted = sorted(get_edges(), key=edge_hash)
+    all_tiles_sorted = sorted(list(maps.tiles.keys()), key=cubical_coord_hash)
+
+    # --- First, all building actions. Settlements, then cities. ---
+    idx = 0
+    for node in all_nodes():
+        build_settlement_action = Action(agent_color, ActionType.BUILD_SETTLEMENT, node)
+        actions_to_indices[build_settlement_action] = idx
+        indices_to_actions[idx] = build_settlement_action
+        idx += 1
+    for node in all_nodes():
+        build_city_action = Action(agent_color, ActionType.BUILD_CITY, node)
+        actions_to_indices[build_city_action] = idx
+        indices_to_actions[idx] = build_city_action
+        idx += 1
+
+    # --- Next, all roads. ---
+    for idx_delta in range(len(INDICES_TO_EDGES)):
+        edge = INDICES_TO_EDGES[idx_delta]
+        build_road_action = Action(agent_color, ActionType.BUILD_ROAD, edge)
+        actions_to_indices[build_road_action] = idx
+        indices_to_actions[idx] = build_road_action
+        idx += 1
+
+    # --- Next, all robber movement actions. ---
+    for tile_loc in all_tiles_sorted:
+        move_robber_action = Action(agent_color, ActionType.MOVE_ROBBER, tile_loc)
+        actions_to_indices[move_robber_action] = idx
+        indices_to_actions[idx] = move_robber_action
+        idx += 1
+
+    # --- Play development cards ---
+    for card in PLAYABLE_DEV_CARDS:
+        # --- TODO(ryancao): Randomly choose a resource for monopoly and year of plenty! ---
+        play_card_action = Action(agent_color, card, None)
+        actions_to_indices[play_card_action] = idx
+        indices_to_actions[idx] = play_card_action
+        idx += 1
+
+    # --- Buy development card ---
+    buy_card_action = Action(agent_color, ActionType.BUY_DEVELOPMENT_CARD, None)
+    actions_to_indices[buy_card_action] = idx
+    indices_to_actions[idx] = buy_card_action
+    idx += 1
+
+    # --- End turn ---
+    end_turn_action = Action(agent_color, ActionType.END_TURN, None)
+    actions_to_indices[end_turn_action] = idx
+    indices_to_actions[idx] = end_turn_action
+    idx += 1
+
+    return actions_to_indices, indices_to_actions
+
 
 def get_edge_mapping():
     """
@@ -97,7 +195,7 @@ def get_immutable_board_state():
 
     # --- Grab resource types (this can be cached, or not used at all) ---
     for (coord, tile) in map.tiles.items():
-        offset_coord = catanatron.models.coordinate_system.cube_to_offset(coord)
+        offset_coord = cube_to_offset(coord)
         offset_coord = tuple(int(x) + 3 for x in offset_coord) # --- [-3, 3] to [0, 6] ---
 
         if type(tile) == Port:
@@ -124,5 +222,5 @@ def get_immutable_board_state():
 
         else:
             print(f'No such tile type: {tile} with type {type(tile)}')
-        
+
     return board_state
