@@ -3,9 +3,10 @@ Taken from PyTorch DQN tutorial:
 https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
 """
 from collections import namedtuple, deque
+import random
 
 Transition = namedtuple('Transition',
-                        ('state', 'action', 'next_state', 'reward'))
+                        ('state', 'action', 'reward', 'next_state'))
 
 
 class ReplayMemory(object):

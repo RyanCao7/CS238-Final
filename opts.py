@@ -21,8 +21,11 @@ def get_train_dqn_args():
     parser.add_argument('--lr', type=float, default=constants.DEFAULT_DQN_LR)
     parser.add_argument('--train-num-steps', type=int, default=constants.DEFAULT_DQN_NUM_STEPS)
     parser.add_argument('--optimizer', type=str, default=constants.DEFAULT_DQN_OPTIM)
+    parser.add_argument('--train-batch-size', type=int, default=constants.DEFAULT_BATCH_SIZE)
+    parser.add_argument('--gamma', type=float, default=constants.GAMMA)
+    parser.add_argument('--epsilon', type=float, default=constants.EPSILON)
     parser.add_argument('--train-every-num-timesteps', type=int, 
-                        default=constants.TRAIN_EVERY_NUM_TIMESTEPS, 
+                        default=constants.TRAIN_EVERY_NUM_TIMESTEPS,
                         help=f'Train every t timesteps (default: {constants.TRAIN_EVERY_NUM_TIMESTEPS}).')
     parser.add_argument('--update-target-dqn-every-num-timesteps', type=int,
                         default=constants.UPDATE_DQN_EVERY_NUM_TIMESTEPS,

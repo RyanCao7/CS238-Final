@@ -31,6 +31,7 @@ class DQN_Agent(Player):
         if args.model_type not in constants.DQN_MODEL_TYPES:
             raise RuntimeError(f'Error: {args.model_type} is not one of {list(constants.DQN_MODEL_TYPES.keys())}')
         self.policy_dqn = constants.DQN_MODEL_TYPES[args.model_type](constants.DEFAULT_BOARD_SIZE, constants.TOTAL_DQN_ACTIONS).to(constants.DEVICE)
+        self.policy_dqn.train()
         self.target_dqn = constants.DQN_MODEL_TYPES[args.model_type](constants.DEFAULT_BOARD_SIZE, constants.TOTAL_DQN_ACTIONS).to(constants.DEVICE)
         self.target_dqn.load_state_dict(self.policy_dqn.state_dict())
         self.target_dqn.eval()
@@ -55,6 +56,11 @@ class DQN_Agent(Player):
             'VPs': list(),
         }
         print('Done!\n')
+
+        # --- Setup for saving (s, a, r, s') tuples ---
+        self.current_state = None
+        self.current_action = None
+        self.current_reward = None
 
     def decide(self, game, playable_actions):
         """Should return one of the playable_actions.
@@ -100,8 +106,8 @@ class DQN_Agent(Player):
                 if simplified_year_of_plenty_action not in year_of_plenty_potential_options:
                     year_of_plenty_potential_options[simplified_year_of_plenty_action] = list()
                 year_of_plenty_potential_options[simplified_year_of_plenty_action].append(action)
-            
-            # --- Fix monnopoly action ---
+
+            # --- Fix monopoly action ---
             if action[1] == ActionType.PLAY_MONOPOLY:
                 simplified_monopoly_action = Action(action[0], action[1], None)
                 playable_actions[idx] = simplified_monopoly_action
@@ -115,9 +121,10 @@ class DQN_Agent(Player):
         # --- Adding dummy "batch" dim and moving to GPU ---
         for (key, value) in game_state_dict.items():
             game_state_dict[key] = torch.unsqueeze(value, dim=0).to(constants.DEVICE)
-            # print(key)
-            # print(game_state_dict[key].shape)
-            # print('-' * 30)
+
+        # --- Add the previous experience to the replay buffer ---
+        if self.current_state is not None:
+            self.replay_buffer.push(self.current_state, self.current_action, self.current_reward, game_state_dict)
 
         # --- Computing forward pass ---
         with torch.no_grad():
@@ -135,7 +142,75 @@ class DQN_Agent(Player):
             action = random.choice(year_of_plenty_potential_options[action])
         elif action in play_monopoly_potential_options:
             action = random.choice(play_monopoly_potential_options[action])
+
+        # --- Cache the current state/action/reward ---
+        prev_victory_points = (0 if self.current_state is None else self.current_state['victory_points'])
+        self.current_reward = game_state_dict['victory_points'] - prev_victory_points
+        self.current_state = game_state_dict
+        self.current_action = action_idx
+
         return action
+
+    def optimize_one_step(self):
+        """
+        Performs a single step of optimization on the agent's DQN.
+        """
+        if len(self.replay_buffer) < self.args.train_batch_size:
+            return
+
+        # --- Sample transitions from the replay buffer ---
+        transitions = self.replay_buffer.sample(self.args.train_batch_size)
+        states, actions, rewards, next_states = list(), list(), list(), list()
+        for (state, action, reward, next_state) in transitions:
+            states.append(state)
+            actions.append(action)
+            rewards.append(reward)
+            next_states.append(next_state)
+
+        # --- Batch each state (and next_state) component ---
+        batched_state = dict()
+        for key in states[0]:
+            batched_state[key] = list()
+            for state in states:
+                batched_state[key].append(state[key])
+            batched_state[key] = torch.cat(batched_state[key], dim=0)
+
+        batched_next_state = dict()
+        for key in next_states[0]:
+            batched_next_state[key] = list()
+            for next_state in next_states:
+                batched_next_state[key].append(next_state[key])
+            batched_next_state[key] = torch.cat(batched_next_state[key], dim=0)
+
+        # --- Batch up the actions ---
+        actions = torch.unsqueeze(torch.Tensor(actions).to(torch.int64), dim=1) # Should be (B, 1)
+
+        # --- Batch up the rewards ---
+        rewards = torch.unsqueeze(torch.Tensor(rewards), dim=1) # Should be (B, 1)
+
+        # --- Compute q-values for actions taken within the batch ---
+        state_action_values = torch.squeeze(self.policy_dqn(batched_state)) # (B, A)
+        state_action_values = torch.gather(state_action_values, 1, actions)
+        # Eventually should be (B, 1)
+
+        # --- Compute target next state values ---
+        next_state_values = torch.squeeze(self.target_dqn(batched_next_state)) # (B, A)
+        next_state_values = torch.max(next_state_values, dim=1, keepdim=True).values.detach()
+        # Eventually should be (B, 1)
+
+        # --- Compute the expected Q values ---
+        expected_state_action_values = (next_state_values * self.args.gamma) + rewards
+
+        # Compute Huber loss
+        loss = self.criterion(state_action_values, expected_state_action_values)
+
+        # Optimize the model
+        self.optim.zero_grad()
+        loss.backward()
+        for param in self.policy_dqn.parameters():
+            if param.grad is not None:
+                param.grad.data.clamp_(-1, 1)
+        self.optim.step()
 
     def save_stats(self):
         save_path = constants.get_model_save_dir(self.args.model_type, self.args.model_name)

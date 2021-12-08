@@ -67,7 +67,10 @@ def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLO
         'opponent_resources': np.zeros(len(Resource)),
 
         # --- Action mask ---
-        'action_mask': np.zeros(constants.TOTAL_DQN_ACTIONS)
+        'action_mask': np.zeros(constants.TOTAL_DQN_ACTIONS),
+
+        # --- Victory points: useful for logging and potentially as a feature ---
+        'victory_points': np.zeros(1)
     }
 
     # --- Create action mask ---
@@ -130,6 +133,9 @@ def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLO
         game.state.player_state[f"{opponent_key}_WHEAT_IN_HAND"]
     board_state['opponent_resources'][constants.RESOURCES_TO_IDX[Resource.ORE]] = \
         game.state.player_state[f"{opponent_key}_ORE_IN_HAND"]
+
+    # --- Victory points ---
+    board_state['victory_points'][0] = game.state.player_state[f"{agent_key}_ACTUAL_VICTORY_POINTS"]
 
     # --- Adding channel dim and converting to tensor ---
     for (key, value) in board_state.items():

@@ -13,7 +13,6 @@ def train_dqn_agent(dqn_agent, args):
     """
     Trains the given DQN agent with the given args.
     """
-
     print(('-' * 15) + ' BEGIN TRAINING ' + ('-' * 15))
 
     # --- Create environment: 1v1 setting for now ---
@@ -29,6 +28,10 @@ def train_dqn_agent(dqn_agent, args):
 
         # --- Play the game by a single tick ---
         game.play_tick(action_callbacks=[], decide_fn=None)
+
+        # --- Run one iteration of model optimization ---
+        if timestep % args.train_every_num_timesteps == 0:
+            dqn_agent.optimize_one_step()
 
         # --- See if we need to log or visualize ---
         if timestep % args.print_every == 0:
