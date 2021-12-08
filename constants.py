@@ -1,7 +1,9 @@
+from catanatron.game import Game
 from catanatron.models.coordinate_system import cube_to_offset
 from catanatron.models.board import get_edges
 from catanatron.models.map import NUM_NODES, NUM_EDGES, NUM_TILES
-from catanatron.models.enums import Action, ActionType, BuildingType, RESOURCES
+from catanatron.models.enums import Action, ActionType, BuildingType, Resource
+from catanatron.models.player import RandomPlayer, Color, HumanPlayer
 import torch
 import models
 import os
@@ -65,11 +67,6 @@ IDX_TO_RESOURCES = [
     Resource.ORE,
 ]
 
-# --- Cached ---
-ACTIONS_TO_INDICES, INDICES_TO_ACTIONS = get_action_mapping()
-EDGES_TO_INDICES, INDICES_TO_EDGES = get_edge_mapping()
-IMMUTABLE_BOARD_STATE = get_immutable_board_state()
-
 
 def edge_hash(edge):
     """
@@ -88,26 +85,52 @@ def cubical_coord_hash(cubical_coord):
     return all_positive_coord[0] * 100 + all_positive_coord[1] * 10 + all_positive_coord[2]
 
 
+def get_edge_mapping():
+    """
+    Maps from edge coordinate tuples to index and vice versa.
+    """
+    edges_to_indices = dict()
+    indices_to_edges = dict()
+    all_edges_sorted = sorted(get_edges(), key=edge_hash)
+    for (idx, edge) in enumerate(all_edges_sorted):
+        edge = (min(edge), max(edge))
+        edges_to_indices[edge] = idx
+        indices_to_edges[idx] = edge
+    return edges_to_indices, indices_to_edges
+
+# --- Cached ---
+EDGES_TO_INDICES, INDICES_TO_EDGES = get_edge_mapping()
+
 def get_action_mapping(agent_color=AGENT_COLOR):
     """
     Maps from actions to action indices and vice versa.
 
     Note: Action = namedtuple("Action", ["color", "action_type", "value"])
     """
+    # --- Dummy setup ---
+    players = [
+        RandomPlayer(Color.RED),
+        RandomPlayer(Color.BLUE),
+        RandomPlayer(Color.WHITE),
+        RandomPlayer(Color.ORANGE),
+    ]
+    game = Game(players)
+    map = game.state.board.map
+
     actions_to_indices = dict()
     indices_to_actions = dict()
-    all_nodes = range(NUM_NODES)
+    all_nodes = list(range(NUM_NODES))
     all_edges_sorted = sorted(get_edges(), key=edge_hash)
-    all_tiles_sorted = sorted(list(maps.tiles.keys()), key=cubical_coord_hash)
+    all_tiles_sorted = sorted(list(map.tiles.keys()), key=cubical_coord_hash)
 
     # --- First, all building actions. Settlements, then cities. ---
     idx = 0
-    for node in all_nodes():
+    for node in all_nodes:
         build_settlement_action = Action(agent_color, ActionType.BUILD_SETTLEMENT, node)
         actions_to_indices[build_settlement_action] = idx
         indices_to_actions[idx] = build_settlement_action
         idx += 1
-    for node in all_nodes():
+    for node in all_nodes:
         build_city_action = Action(agent_color, ActionType.BUILD_CITY, node)
         actions_to_indices[build_city_action] = idx
         indices_to_actions[idx] = build_city_action
@@ -150,19 +173,8 @@ def get_action_mapping(agent_color=AGENT_COLOR):
 
     return actions_to_indices, indices_to_actions
 
-
-def get_edge_mapping():
-    """
-    Maps from edge coordinate tuples to index and vice versa.
-    """
-    edges_to_indices = dict()
-    indices_to_edges = dict()
-    all_edges_sorted = sorted(get_edges(), key=lambda x: x[0] * 100 + x[1])
-    for (idx, edge) in enumerate(all_edges_sorted):
-        edge = (min(edge), max(edge))
-        edges_to_indices[edge] = idx
-        indices_to_edges[idx] = edge
-    return edges_to_indices, indices_to_edges
+# --- Cached ---
+ACTIONS_TO_INDICES, INDICES_TO_ACTIONS = get_action_mapping()
 
 def get_immutable_board_state():
     """
@@ -171,7 +183,7 @@ def get_immutable_board_state():
 
     # --- Dummy setup ---
     players = [
-        MyPlayer(Color.RED),
+        RandomPlayer(Color.RED),
         RandomPlayer(Color.BLUE),
         RandomPlayer(Color.WHITE),
         RandomPlayer(Color.ORANGE),
@@ -224,3 +236,6 @@ def get_immutable_board_state():
             print(f'No such tile type: {tile} with type {type(tile)}')
 
     return board_state
+
+    # --- Cached ---
+    IMMUTABLE_BOARD_STATE = get_immutable_board_state()
