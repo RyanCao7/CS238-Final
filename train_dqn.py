@@ -1,3 +1,5 @@
+import os
+from catanatron.game import Game
 from catanatron.models.player import RandomPlayer, Color, HumanPlayer
 
 import agents

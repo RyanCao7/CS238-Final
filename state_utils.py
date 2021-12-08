@@ -30,6 +30,13 @@ def visualize_map(map_tiles):
     return map
 
 
+def convert_cubical_to_numpy_coords(cubical_coords):
+    """
+    Converts cubical to numpy equivalent.
+    """
+    return list((int(x) + 3) for x in catanatron.models.coordinate_system.cube_to_offset(cubical_coords))
+
+
 def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLOR):
     """
     Returns a board state from the given game.
@@ -67,14 +74,17 @@ def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLO
     for action in playable_actions:
         if action not in constants.ACTIONS_TO_INDICES:
             raise RuntimeError(f'Ruh roh, {action} not in ACTIONS_TO_INDICES!')
+        print(constants.TOTAL_DQN_ACTIONS)
+        print(action)
+        print(constants.ACTIONS_TO_INDICES[action])
         board_state['action_mask'][constants.ACTIONS_TO_INDICES[action]] = 1
 
     # --- Throw in the immutables (TODO(ryancao): Do we even need this?) ---
     # board_state.update(constants.IMMUTABLE_BOARD_STATE)
 
     # --- Robber ---
-    robber_coords = catanatron.models.coordinate_system.cube_to_offset(game.state.board.robber_coordinate)
-    board_state['grid_robber_loc'][robber_coords] = 1
+    robber_coords = convert_cubical_to_numpy_coords(game.state.board.robber_coordinate)
+    board_state['grid_robber_loc'][robber_coords[0]][robber_coords[1]] = 1
     
     # --- Grab edge info ---
     for (edge, road) in game.state.board.roads.items():
@@ -125,6 +135,6 @@ def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLO
 
     # --- Adding channel dim and converting to tensor ---
     for (key, value) in board_state.items():
-        board_state[key] = torch.from_numpy(np.expand_dims(value, axis=0))
+        board_state[key] = torch.Tensor(np.expand_dims(value, axis=0)).to(dtype=torch.float32)
 
     return board_state

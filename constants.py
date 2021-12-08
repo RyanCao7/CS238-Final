@@ -101,6 +101,10 @@ def get_edge_mapping():
 # --- Cached ---
 EDGES_TO_INDICES, INDICES_TO_EDGES = get_edge_mapping()
 
+def get_all_valid_robber_tiles():
+    # TODO(ryancao)
+    pass
+
 def get_action_mapping(agent_color=AGENT_COLOR):
     """
     Maps from actions to action indices and vice versa.
@@ -145,6 +149,10 @@ def get_action_mapping(agent_color=AGENT_COLOR):
         idx += 1
 
     # --- Next, all robber movement actions. ---
+    print('\n\n\n')
+    print(len(all_tiles_sorted))
+    print('LOLOL\n\n\n')
+    print(NUM_TILES)
     for tile_loc in all_tiles_sorted:
         move_robber_action = Action(agent_color, ActionType.MOVE_ROBBER, tile_loc)
         actions_to_indices[move_robber_action] = idx
@@ -175,6 +183,8 @@ def get_action_mapping(agent_color=AGENT_COLOR):
 
 # --- Cached ---
 ACTIONS_TO_INDICES, INDICES_TO_ACTIONS = get_action_mapping()
+# for idx in range(len(INDICES_TO_ACTIONS)):
+#     print(idx, INDICES_TO_ACTIONS[idx])
 
 def get_immutable_board_state():
     """

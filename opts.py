@@ -13,7 +13,7 @@ def get_train_dqn_args():
                         default=constants.REPLAY_BUFFER_CAPACITY)
 
     # --- Model ---
-    parser.add_argument('--model-type', type=str, required=True, 
+    parser.add_argument('--model-type', type=str,
                         help=f'Model type. Choices are {constants.DQN_MODEL_TYPES} (default: {constants.DEFAULT_DQN_MODEL}).',
                         default=constants.DEFAULT_DQN_MODEL)
 

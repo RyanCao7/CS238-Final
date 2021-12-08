@@ -17,7 +17,7 @@ class Catan_Feedforward_DQN(nn.Module):
         return (size - (kernel_size - 1) - 1) // stride + 1
 
     def __init__(self, board_size, total_num_actions):
-        super(DQN, self).__init__()
+        super(Catan_Feedforward_DQN, self).__init__()
 
         # --- Robber repr is very straightforward ---
         self.grid_robber_head_1 = nn.Conv2d(1, 8, kernel_size=3, stride=1)
@@ -46,7 +46,7 @@ class Catan_Feedforward_DQN(nn.Module):
         self.combined_resources_head_bn = nn.BatchNorm1d(1)
 
         # --- Combining ---
-        combined_dim = self.conv2d_size_out(board_size, kernel_size=3, stride=1)
+        combined_dim = (self.conv2d_size_out(board_size, kernel_size=3, stride=1) ** 2) * 8
         combined_dim += NUM_EDGES * 2 + NUM_NODES * 2 + NUM_RESOURCES * 8
         intermediate_dim = NUM_EDGES * 2 + NUM_NODES * 2 + NUM_RESOURCES * 8
         self.combined_head = nn.Linear(combined_dim, intermediate_dim)
@@ -69,7 +69,7 @@ class Catan_Feedforward_DQN(nn.Module):
         # --- Robber ---
         robber_input = F.relu(self.grid_robber_head_bn(self.grid_robber_head_1(robber_input)))
         # --- Flatten ---
-        robber_input = robber_input.view(robber_input.size(0), -1)
+        robber_input = robber_input.view(robber_input.size(0), 1, -1)
 
         # --- Roads ---
         road_input = F.relu(self.road_color_head_bn_1(self.road_color_head_1(road_input)))
@@ -78,16 +78,16 @@ class Catan_Feedforward_DQN(nn.Module):
         # --- Settlements and cities ---
         settlement_input = F.relu(self.settlements_head_bn(self.settlements_head(settlement_input)))
         city_input = F.relu(self.cities_head_bn(self.cities_head(city_input)))
-        settlement_city_input = torch.cat([settlement_input, city_input])
-        settlement_city_input = F.relu(self.settlements_cities_head_bn(self.settlements_cities(settlement_city_input)))
+        settlement_city_input = torch.cat([settlement_input, city_input], axis=-1)
+        settlement_city_input = F.relu(self.settlements_cities_head_bn(self.settlements_cities_head(settlement_city_input)))
 
         # --- Resources ---
         player_resources_input = F.relu(self.player_resources_head_bn(self.player_resources_head(player_resources_input)))
         opponent_resources_input = F.relu(self.opponent_resources_head_bn(self.opponent_resources_head(opponent_resources_input)))
-        combined_resources_input = torch.cat([player_resources_input, opponent_resources_input])
+        combined_resources_input = torch.cat([player_resources_input, opponent_resources_input], axis=-1)
 
         # --- Combining ---
-        combined_input = torch.cat([robber_input, road_input, settlement_city_input, combined_resources_input])
+        combined_input = torch.cat([robber_input, road_input, settlement_city_input, combined_resources_input], axis=-1)
         combined_input = F.relu(self.combined_head_bn(self.combined_head(combined_input)))
 
         # --- Output ---

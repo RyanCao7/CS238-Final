@@ -2,7 +2,7 @@
 Taken from PyTorch DQN tutorial:
 https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
 """
-from collections import namedtuple
+from collections import namedtuple, deque
 
 Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))
