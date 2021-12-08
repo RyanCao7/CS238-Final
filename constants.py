@@ -39,8 +39,6 @@ PLAYABLE_DEV_CARDS = [
     ActionType.PLAY_MONOPOLY,
     ActionType.PLAY_ROAD_BUILDING
 ]
-# Settlements, cities, roads, robber moving, play dev card, buy dev card, and end turn.
-TOTAL_DQN_ACTIONS = NUM_NODES * 2 + NUM_EDGES + NUM_TILES + len(PLAYABLE_DEV_CARDS) + 1 + 1
 
 # --- Device ---
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -67,6 +65,28 @@ IDX_TO_RESOURCES = [
     Resource.ORE,
 ]
 
+
+def get_total_num_tiles():
+    """
+    Returns total number of tiles within the map (including water)
+    """
+
+    # --- Dummy setup ---
+    players = [
+        RandomPlayer(Color.RED),
+        RandomPlayer(Color.BLUE),
+        RandomPlayer(Color.WHITE),
+        RandomPlayer(Color.ORANGE),
+    ]
+    game = Game(players)
+    map = game.state.board.map
+    return len(map.tiles)
+
+# --- Cached ---
+TOTAL_NUM_TILES = get_total_num_tiles()
+
+# Settlements, cities, roads, robber moving, play dev card, buy dev card, and end turn.
+TOTAL_DQN_ACTIONS = NUM_NODES * 2 + NUM_EDGES + TOTAL_NUM_TILES + len(PLAYABLE_DEV_CARDS) + 1 + 1
 
 def edge_hash(edge):
     """
@@ -100,10 +120,6 @@ def get_edge_mapping():
 
 # --- Cached ---
 EDGES_TO_INDICES, INDICES_TO_EDGES = get_edge_mapping()
-
-def get_all_valid_robber_tiles():
-    # TODO(ryancao)
-    pass
 
 def get_action_mapping(agent_color=AGENT_COLOR):
     """
@@ -149,10 +165,6 @@ def get_action_mapping(agent_color=AGENT_COLOR):
         idx += 1
 
     # --- Next, all robber movement actions. ---
-    print('\n\n\n')
-    print(len(all_tiles_sorted))
-    print('LOLOL\n\n\n')
-    print(NUM_TILES)
     for tile_loc in all_tiles_sorted:
         move_robber_action = Action(agent_color, ActionType.MOVE_ROBBER, tile_loc)
         actions_to_indices[move_robber_action] = idx

@@ -73,10 +73,8 @@ def extract_board_state(game, playable_actions, agent_color=constants.AGENT_COLO
     # --- Create action mask ---
     for action in playable_actions:
         if action not in constants.ACTIONS_TO_INDICES:
+            print(constants.ACTIONS_TO_INDICES)
             raise RuntimeError(f'Ruh roh, {action} not in ACTIONS_TO_INDICES!')
-        print(constants.TOTAL_DQN_ACTIONS)
-        print(action)
-        print(constants.ACTIONS_TO_INDICES[action])
         board_state['action_mask'][constants.ACTIONS_TO_INDICES[action]] = 1
 
     # --- Throw in the immutables (TODO(ryancao): Do we even need this?) ---
