@@ -218,7 +218,6 @@ class DQN_Agent(Player):
         """
         Sets target net weights to match policy net weights.
         """
-        print('Updating!')
         self.target_dqn.load_state_dict(self.policy_dqn.state_dict())
 
     def print_stats(self, timestep):
