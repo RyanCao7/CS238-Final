@@ -1,4 +1,5 @@
 from collections import deque
+import copy
 import json
 import numpy as np
 import os
@@ -69,6 +70,9 @@ class DQN_Agent(Player):
             game (Game): complete game state. read-only.
             playable_actions (Iterable[Action]): options right now
         """
+
+        # --- Just in case ---
+        original_actions = copy.deepcopy(playable_actions)
 
         # --- Edge case: roll action ---
         if playable_actions[0] == (self.color, ActionType.ROLL, None):
@@ -150,7 +154,11 @@ class DQN_Agent(Player):
         self.current_state = game_state_dict
         self.current_action = action_idx
 
-        return action
+        if action in original_actions:
+            return action
+
+        print(f'Should not be getting here. Action is {action} and original actions is {original_actions}.')
+        return random.choice(original_actions)
 
     def optimize_one_step(self):
         """

@@ -36,7 +36,7 @@ def get_train_dqn_args():
     
     # --- Other ---
     parser.add_argument('--eval-every', type=int, default=1000, help='Eval every n timesteps.')
-    parser.add_argument('--save-every', type=int, default=3000, help='Save model every n timesteps.')
+    parser.add_argument('--save-every', type=int, default=5000, help='Save model every n timesteps.')
     parser.add_argument('--print-every', type=int, default=500, help='Print every n timesteps.')
     
     args = parser.parse_args()
