@@ -54,6 +54,7 @@ class DQN_Agent(Player):
             'losses': list(),
             'returns': list(),
             'VPs': list(),
+            'episode_lengths': list(),
         }
         print('Done!\n')
 
@@ -213,10 +214,22 @@ class DQN_Agent(Player):
                 param.grad.data.clamp_(-1, 1)
         self.optim.step()
 
+    def update_target_net(self):
+        """
+        Sets target net weights to match policy net weights.
+        """
+        print('Updating!')
+        self.target_dqn.load_state_dict(self.policy_dqn.state_dict())
+
     def print_stats(self, timestep):
         """
         Prints train stats and saves the current loss.
         """
+        def mean(it):
+            if len(it) == 0:
+                return 0
+            return sum(it) / len(it)
+
         if timestep < self.args.print_every:
             return
         avg_loss = mean(self.loss_cache)
@@ -224,7 +237,8 @@ class DQN_Agent(Player):
         avg_vps = mean(self.train_stats['VPs'][-100:])
         self.train_stats['losses'].append(self.loss_cache[-1])
         self.train_stats['smoothed_losses'].append(avg_loss)
-        print(f'Timestep: {timestep} | Average loss: {avg_loss} | Average return: {avg_return} | Average VPs: {avg_vps}')
+        # print(f'Timestep: {timestep} | Average loss: {avg_loss} | Average return: {avg_return} | Average VPs: {avg_vps}')
+        print(f'Timestep: {timestep} | Average loss: {avg_loss} | Average VPs: {avg_vps}')
 
     def save_stats(self):
         save_path = constants.get_model_save_dir(self.args.model_type, self.args.model_name)

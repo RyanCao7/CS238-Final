@@ -22,12 +22,14 @@ def train_dqn_agent(dqn_agent, args):
     ]
     game = Game(players)
     num_episodes = 0
+    episode_len = 0
 
     # --- Main data collection loop ---
     for timestep in range(args.train_num_steps):
 
         # --- Play the game by a single tick ---
         game.play_tick(action_callbacks=[], decide_fn=None)
+        episode_len += 1
 
         # --- Run one iteration of model optimization ---
         if timestep % args.train_every_num_timesteps == 0:
@@ -40,12 +42,17 @@ def train_dqn_agent(dqn_agent, args):
             dqn_agent.save_stats()
             dqn_agent.save_model(timestep, num_episodes)
             dqn_agent.plot_stats(timestep, num_episodes)
+        
+        if timestep % args.update_target_dqn_every_num_timesteps == 0:
+            dqn_agent.update_target_net()
 
         # --- End of an episode; log and reset the game ---
         if game.winning_color() is not None:
-            num_episodes += 1
             dqn_agent_num_vps = game.state.player_state['P0_VICTORY_POINTS']
             dqn_agent.train_stats['VPs'].append(dqn_agent_num_vps)
+            dqn_agent.train_stats['episode_lengths'].append(episode_len)
+            num_episodes += 1
+            episode_len = 0
             game = Game(players)
 
     return dqn_agent
